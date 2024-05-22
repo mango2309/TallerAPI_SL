@@ -1,4 +1,7 @@
-﻿namespace TallerAPI_SL
+﻿using Newtonsoft.Json;
+using TallerAPI_SL.Models;
+
+namespace TallerAPI_SL
 {
     public partial class MainPage : ContentPage
     {
@@ -8,7 +11,19 @@
             InitializeComponent();
         }
 
-
+        private void Button_Clicked(object sender, EventArgs e)
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:7222/api/"); //Cambiar el puerto "7.." del localhost
+            var response = client.GetAsync("burger").Result;
+            if (response.IsSuccessStatusCode)
+            {
+                var burgers = response.Content.ReadAsStringAsync().Result;
+                var burgersList =
+               JsonConvert.DeserializeObject<List<Burger>>(burgers);
+                listView.ItemsSource = burgersList;
+            }
+        }
     }
 
 }
